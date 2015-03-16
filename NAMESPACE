@@ -1,0 +1,5 @@
+exportPattern("^[[:alpha:]]+")
+exportMethods(
+    "Irr",
+    "rWeights"
+)
