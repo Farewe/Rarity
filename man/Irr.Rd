@@ -45,13 +45,13 @@ All the species of \code{assemblages} must be contained in \code{W}
 If the input of \code{rWeights} is directly entered, then columns \code{Q} (occurrence) and \code{R} (rarity status) will be dropped.
 
 \itemize{
-\item{Occurrence-based Irr, not normalised between 0 and 1:
+\item{Occurrence-based Irr, normalised between 0 and 1:
 \deqn{\frac{\frac{\sum w_i}{S} - w_{min}}{w_{max} - w_{min}}}{(\sum(wi) / S - wmin) / (wmax - wmin)}
 where \emph{wi} is the weight of the \emph{i}th species in the assemblage, \emph{S} the assemblage species richness, \emph{w}min and \emph{w}max the minimum and maximum weights respectively.
 }
-\item{Abundance-based Irr, not normalised between 0 and 1:
-\deqn{\frac{\frac{\sum a_i w_i}{S} - w_{min}}{w_{max} - w_{min}}}{(\sum(ai*wi) / S - wmin) / (wmax - wmin)}
-where \emph{ai} and \emph{wi} are respectively the abundance and weight of the \emph{i}th species in the assemblage, \emph{S} the assemblage species richness, \emph{w}min and \emph{w}max the minimum and maximum weights respectively.}
+\item{Abundance-based Irr, normalised between 0 and 1:
+\deqn{\frac{\frac{\sum a_i w_i}{N} - w_{min}}{w_{max} - w_{min}}}{(\sum(ai*wi) / S - wmin) / (wmax - wmin)}
+where \emph{ai} and \emph{wi} are respectively the abundance and weight of the \emph{i}th species in the assemblage, \emph{N} the total number of individuals in the assemblage, and \emph{w}min and \emph{w}max the minimum and maximum weights respectively.}
 }
 }
 \section{Warning}{
