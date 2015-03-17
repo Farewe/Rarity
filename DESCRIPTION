@@ -2,9 +2,9 @@ Package: Rarity
 Type: Package
 Title: Calculation of rarity indices for species and assemblages of species
 Version: 1.3
-Date: 2013-10-28
+Date: 2015-03-17
 Author: Boris Leroy
 Maintainer: Boris Leroy <leroy.boris@gmail.com>
-Description: This package allows calculation of rarity weights for species and indices of rarity for assemblages of species according to different methods (Leroy et al. 2012, In Press).
+Description: Allows calculation of rarity weights for species and indices of rarity for assemblages of species according to different methods (Leroy et al. 2012, 2013).
 License: GPL (>=2.0)
 Depends: methods,graphics,stats

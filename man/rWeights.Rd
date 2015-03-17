@@ -61,11 +61,20 @@ The minimum and maximum weights can be set manually, or automatically calculated
 
 Three weighting methods are available (more will become available later):
 
-\bold{1.} \code{W}: This is the method described in Leroy et al. In Press. We recommend using this method for both single and multiscale weight calculations.
-
-\bold{2.} \code{invQ}: This is the inverse of occurrence.
-
-\bold{3.} \code{oldW}: This is the original method described in Leroy et al. 2012. As this method was improved in Leroy et al. In press, we recommend to rather use \code{W}
+\enumerate{
+\item{\code{W}: This is the method described in Leroy et al. (2013). We recommend using this method for both single and multiscale weight calculations.
+\deqn{\exp(-(\frac{Q_{i} - Q_{min}}{r_j \times Q_{max} - Q_{min}}\times0.97 + 1.05)^2)}{exp(-(((Qi - Qmin)/(r * Qmax - Qmin)) * 0.97 + 1.05)^2)}
+where \emph{Qi} is the occurrence of species \emph{i}, Qmin and Qmax are respectively the minimum and maximum occurrences in the species pool and \emph{r} is the choosen rarit cut-off point (as a percentage of occurrence).
+}
+\item{\code{invQ}: This is the inverse of occurrence
+\deqn{\frac{1}{Q_i}}{1/Qi}
+where \emph{Qi} is the occurrence of the \emph{i}th species. The inverse of the occurrence should be avoided as a weighting procedure because it cannot be adjusted to the considered species pool, and it does not attribute 0 weights to common species (see discussion in Leroy et al. (2012)).
+}
+\item{\code{oldW}: This is the original method described in Leroy et al. (2012). As this method was improved in Leroy et al. (2013), we recommend to rather use \code{W}. Formula:
+\deqn{\exp(-(\frac{Q_i}{Q_{min}} n + 1)^2)}{exp(-((Qi/Qmin) * n + 1)^2)} 
+where \emph{Qi} is the occurrence of species \emph{i}, Qmin is the minimum occurrence in the species pool, and \emph{n} is and adjustment coefficient numerically approximated to fit the choosen rarity cut-off point.
+}
+}
 
 
 
@@ -87,7 +96,7 @@ By default, weights are rounded to 3 digits, which should be sufficient in most 
 \references{
 Leroy B., Petillon J., Gallon R., Canard A., & Ysnel F. (2012) Improving occurrence-based rarity metrics in conservation studies by including multiple rarity cut-off points. \emph{Insect Conservation and Diversity}, \bold{5}, 159-168.
 
-Leroy B., Canard A., & Ysnel F. In Press. Integrating multiple scales in rarity assessments of invertebrate taxa. \emph{Diversity and Distributions}, \bold{19}, 794-803.
+Leroy B., Canard A., & Ysnel F. 2013. Integrating multiple scales in rarity assessments of invertebrate taxa. \emph{Diversity and Distributions}, \bold{19}, 794-803.
 
 }
 \author{
@@ -95,7 +104,7 @@ Boris Leroy leroy.boris@gmail.com
 }
 
 \seealso{
-\code{\link{Irr}}
+\code{\link{Irr}}, \code{\link{Isr}}
 }
 \examples{
 # 1. Single scale rarity weights

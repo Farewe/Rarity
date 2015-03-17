@@ -1,23 +1,25 @@
-\name{Irr}
-\alias{Irr}
-\alias{Irr,data.frame,data.frame-method}
-\alias{Irr,data.frame,matrix-method}
-\alias{Irr,data.frame,vector-method}
-\alias{Irr,matrix,data.frame-method}
-\alias{Irr,matrix,matrix-method}
-\alias{Irr,matrix,vector-method}
-\alias{Irr,vector,data.frame-method}
-\alias{Irr,vector,matrix-method}
-\alias{Irr,vector,vector-method}
+\name{Isr}
+\alias{Isr}
+\alias{Isr,data.frame,data.frame-method}
+\alias{Isr,data.frame,matrix-method}
+\alias{Isr,data.frame,vector-method}
+\alias{Isr,matrix,data.frame-method}
+\alias{Isr,matrix,matrix-method}
+\alias{Isr,matrix,vector-method}
+\alias{Isr,vector,data.frame-method}
+\alias{Isr,vector,matrix-method}
+\alias{Isr,vector,vector-method}
 \title{
-Index of Relative Rarity
+Index of Summed Rarity
 }
 \description{
-Calculates the Index of Relative Rarity for a single or a set of assemblages of species.
+Calculates the Index of Relative Rarity for a single or a set of assemblages of species. The index of summed rarity consists in summing the rarity weights of species in the assemblage, with the possibility of normalising between 0 (the assemblage has only minimum-weight species) and 1 (value of the complete pool of species (see details)).
+
 }
 \usage{
-Irr(assemblages, W, abundance = F, Wmin = min(W), Wmax = max(W))
+Isr(assemblages, W, abundance = F, Wmin = min(W), normalise = FALSE)
 }
+%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{assemblages}{
 \code{vector}, \code{matrix} or \code{data.frame}. Data of the assemblage(s) of species for which the Index will be calculated. If \code{matrix} or \code{data.frame}, species are in rows and assemblages are in columns (see details).
@@ -40,18 +42,24 @@ decimal or \code{vector}. Maximum weight(s)
 
 All the species of \code{assemblages} must be contained in \code{W}
 
-\code{W} can contain a single vector of rarity weights, or a matrix or a data.frame of rarity weights (e.g. to calculate different Indices of Relative Rarity for different scales). If \code{W} is a vector, values must be named with species names. If \code{W} is a matrix or a data.frame, then species are in rows and each column contains rarity weights. Rows must be named with species names.
+\code{W} can contain a single vector of rarity weights, or a matrix or a data.frame of rarity weights (e.g. to calculate different Indices of Summed Rarity for different scales). If \code{W} is a vector, values must be named with species names. If \code{W} is a matrix or a data.frame, then species are in rows and each column contains rarity weights. Rows must be named with species names.
 
 If the input of \code{rWeights} is directly entered, then columns \code{Q} (occurrence) and \code{R} (rarity status) will be dropped.
 
+Formula implemented in this function:
 \itemize{
-\item{Occurrence-based Irr, not normalised between 0 and 1:
-\deqn{\frac{\frac{\sum w_i}{S} - w_{min}}{w_{max} - w_{min}}}{(\sum(wi) / S - wmin) / (wmax - wmin)}
-where \emph{wi} is the weight of the \emph{i}th species in the assemblage, \emph{S} the assemblage species richness, \emph{w}min and \emph{w}max the minimum and maximum weights respectively.
+\item{Occurrence-based Isr, not normalised between 0 and 1:
+\deqn{\sum w_i}{\sum wi}
+where \emph{wi} is the weight of the \emph{i}th species in the assemblage
 }
-\item{Abundance-based Irr, not normalised between 0 and 1:
-\deqn{\frac{\frac{\sum a_i w_i}{S} - w_{min}}{w_{max} - w_{min}}}{(\sum(ai*wi) / S - wmin) / (wmax - wmin)}
-where \emph{ai} and \emph{wi} are respectively the abundance and weight of the \emph{i}th species in the assemblage, \emph{S} the assemblage species richness, \emph{w}min and \emph{w}max the minimum and maximum weights respectively.}
+\item{Abundance-based Isr, not normalised between 0 and 1:
+\deqn{\sum a_i \times w_i}{\sum ai wi}
+where \emph{ai} and \emph{wi} are respectively the abundance and weight of the \emph{i}th species in the assemblage
+}
+\item{Occurrence-based Isr, normalised between 0 and 1:
+\deqn{\frac{\sum(w_i - w_{min})}{\sum(W_j - w_{min})}}{\sum(wi - wmin) / \sum(Wj - wmin)}
+where \emph{wi} is the weight of the \emph{i}th species in the assemblage, \emph{wmin} the minimum weight and \emph{Wj} the weight of the \emph{j}th species in the regional species pool.
+}
 }
 }
 \section{Warning}{
@@ -70,7 +78,7 @@ Leroy B., Canard A., & Ysnel F. 2013. Integrating multiple scales in rarity asse
 Boris Leroy leroy.boris@gmail.com
 }
 \seealso{
-\code{\link{rWeights}}, \code{\link{Isr}}
+\code{\link{rWeights}}, \code{\link{Irr}}
 }
 \examples{
 # Input rarity weights
@@ -94,8 +102,9 @@ assemblages.matrix <- cbind(assemblage.1 = sample(c(0, 1), 50, replace = TRUE),
 rownames(assemblages.matrix) <- sample(names(regional.occ), 50, replace = FALSE)
 head(assemblages.matrix)
 
-# Calculation of Irr
-Irr(assemblages.matrix, rarity.weights)
+# Calculation of Isr
+Isr(assemblages.matrix, rarity.weights)
+Isr(assemblages.matrix, rarity.weights, normalise = TRUE)
 
 
 # Example of a multi scale dataset
@@ -111,6 +120,7 @@ assemblages.matrix <- cbind(assemblage.1 = sample(c(0, 1), 50, replace = TRUE),
 rownames(assemblages.matrix) <- sample(names(regional.occ), 50, replace = FALSE)
 head(assemblages.matrix)
 
-# Calculation of Irr
-Irr(assemblages.matrix, rarity.weights)
+# Calculation of Isr
+Isr(assemblages.matrix, rarity.weights)
+Isr(assemblages.matrix, rarity.weights, normalise = TRUE)
 }
