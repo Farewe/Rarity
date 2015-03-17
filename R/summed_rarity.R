@@ -39,7 +39,7 @@ setMethod("Isr",
               
               if(abundance)
               {
-                if(standardise)
+                if(normalise)
                 {
                   stop("The index cannot be standardised between 0 and 1 when abundance = TRUE. Set abundance = FALSE or normalise = FALSE")
                 }
@@ -93,7 +93,7 @@ setMethod("Isr",
                 
                 if(abundance)
                 {
-                  if(standardise)
+                  if(normalise)
                   {
                     stop("The index cannot be standardised between 0 and 1 when abundance = TRUE. Set abundance = FALSE or normalise = FALSE")
                   }
@@ -155,7 +155,7 @@ setMethod("Isr",
                 
                 if(abundance)
                 {
-                  if(standardise)
+                  if(normalise)
                   {
                     stop("The index cannot be standardised between 0 and 1 when abundance = TRUE. Set abundance = FALSE or normalise = FALSE")
                   }

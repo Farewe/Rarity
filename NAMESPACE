@@ -1,6 +1,6 @@
+import(methods)
 exportPattern("^[[:alpha:]]+")
-exportMethods(
-    "Irr",
-    "Isr",
-    "rWeights"
-)
+export(Irr)
+export(Isr)
+export(rWeights)
+
