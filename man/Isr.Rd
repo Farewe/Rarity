@@ -17,7 +17,7 @@ Calculates the Index of Relative Rarity for a single or a set of assemblages of 
 
 }
 \usage{
-Isr(assemblages, W, abundance = F, Wmin = min(W), normalise = FALSE)
+Isr(assemblages, W, abundance = FALSE, Wmin = min(W), normalise = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,8 +33,8 @@ logical. If \code{TRUE}, then abundance values in \code{assemblages} are taken i
   \item{Wmin}{
 decimal or \code{vector}. Minimum weight(s)
 }
-  \item{Wmax}{
-decimal or \code{vector}. Maximum weight(s)
+  \item{normalise}{
+logical. If \code{TRUE}, then the Isr will be rescaled between 0 and 1 (see formula in details). Cannot be used if \code{abundance = TRUE}.
 }
 }
 \details{
