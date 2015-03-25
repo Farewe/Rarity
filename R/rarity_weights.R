@@ -123,7 +123,7 @@ setMethod("rWeights",
               spWeights <- cbind(spWeights,
                                  cut.off = rCutoff)
             }
-            if(!!rounding)
+            if(rounding)
             {
               if(!is.numeric(rounding))
               {
@@ -293,7 +293,7 @@ setMethod("rWeights",
               spWeights <- cbind(spWeights,
                                  cut.off = rCutoff)
             }
-            if(!!rounding)
+            if(rounding)
             {
               if(!is.numeric(rounding))
               {

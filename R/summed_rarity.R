@@ -73,10 +73,10 @@ setMethod("Isr",
               full.W <- W
               W <- W[match(names(assemblages), rownames(W)), ]
             }
-            if(any(colnames(W) %in% c("Q", "R", paste("Q", 1:100, sep = ""), paste("R", 1:100, sep = ""))))
+            if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
             {
-              full.W <- full.W[, -which(colnames(full.W) %in% c("Q", "R", paste("Q", 1:100, sep = ""), paste("R", 1:100, sep = ""))), drop = F]
-              W <- W[, -which(colnames(W) %in% c("Q", "R", paste("Q", 1:100, sep = ""), paste("R", 1:100, sep = ""))), drop = F]
+              full.W <- full.W[, -which(colnames(full.W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))), drop = F]
+              W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))), drop = F]
             }
             
             IsrValue <- NULL
@@ -135,10 +135,10 @@ setMethod("Isr",
               full.W <- W
               W <- W[match(names(assemblages), rownames(W)), ]
             }
-            if(any(colnames(W) %in% c("Q", "R", paste("Q", 1:100, sep = ""), paste("R", 1:100, sep = ""))))
+            if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
             {
-              full.W <- full.W[, -which(colnames(full.W) %in% c("Q", "R", paste("Q", 1:100, sep = ""), paste("R", 1:100, sep = ""))), drop = F]
-              W <- W[, -which(colnames(W) %in% c("Q", "R", paste("Q", 1:100, sep = ""), paste("R", 1:100, sep = ""))), drop = F]
+              full.W <- full.W[, -which(colnames(full.W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))), drop = F]
+              W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))), drop = F]
             }
             
             IsrValue <- NULL
@@ -249,8 +249,8 @@ setMethod("Isr",
             }
             if(any(colnames(W) %in% c("Q", "R", paste("Q", 1:100, sep = ""), paste("R", 1:100, sep = ""))))
             {
-              full.W <- full.W[, -which(colnames(full.W) %in% c("Q", "R", paste("Q", 1:100, sep = ""), paste("R", 1:100, sep = ""))), drop = F]
-              W <- W[, -which(colnames(W) %in% c("Q", "R", paste("Q", 1:100, sep = ""), paste("R", 1:100, sep = ""))), drop = F]
+              full.W <- full.W[, -which(colnames(full.W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))), drop = F]
+              W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))), drop = F]
             }
             
             IsrValue <- NULL
