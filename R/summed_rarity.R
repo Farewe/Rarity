@@ -18,6 +18,7 @@ setMethod("Isr",
           signature(assemblages = "vector", W = "vector"),
           function(assemblages, W, abundance = F, Wmin = min(W), normalise = F)
           {
+            full.W <- W
             if(length(assemblages) != length(W))
             {
               cat("Remark: Number of species different between assemblages and W, combining with species names...\n")
@@ -25,7 +26,6 @@ setMethod("Isr",
               {
                 stop("Species names of assemblages do not correspond to species names of W")
               }
-              full.W <- W
               W <- W[match(names(assemblages), names(W))]
             }
             if(sum(assemblages) == 0)
@@ -63,6 +63,7 @@ setMethod("Isr",
           signature(assemblages = "vector", W = "matrix"),
           function(assemblages, W, abundance = F, Wmin = apply(W, 2, min), normalise = F)
           {
+            full.W <- W
             if(length(assemblages) != nrow(W))
             {
               cat("Remark: Number of species different between assemblages and W, combining with species names...\n")
@@ -70,7 +71,6 @@ setMethod("Isr",
               {
                 stop("Species names of assemblages do not correspond to species names of W")
               }
-              full.W <- W
               W <- W[match(names(assemblages), rownames(W)), ]
             }
             if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
@@ -125,60 +125,7 @@ setMethod("Isr",
           function(assemblages, W, abundance = F, Wmin = apply(W, 2, min), normalise = F)
           {
             W <- as.matrix(W)
-            if(length(assemblages) != nrow(W))
-            {
-              cat("Remark: Number of species different between assemblages and W, combining with species names...\n")
-              if(any(!(names(assemblages) %in% rownames(W))))
-              {
-                stop("Species names of assemblages do not correspond to species names of W")
-              }
-              full.W <- W
-              W <- W[match(names(assemblages), rownames(W)), ]
-            }
-            if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
-            {
-              full.W <- full.W[, -which(colnames(full.W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))), drop = F]
-              W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))), drop = F]
-            }
-            
-            IsrValue <- NULL
-            for (x1 in 1:ncol(W))
-            {
-              if(sum(assemblages) == 0)
-              {
-                IsrValue <- c(IsrValue,
-                              0)
-              } else
-              {
-                PA.assemblages <- assemblages
-                PA.assemblages[PA.assemblages > 0] <- 1
-                
-                if(abundance)
-                {
-                  if(normalise)
-                  {
-                    stop("The index cannot be standardised between 0 and 1 when abundance = TRUE. Set abundance = FALSE or normalise = FALSE")
-                  }
-                  IsrValue <-  c(IsrValue,
-                                 sum(assemblages * W[, x1])) # Formula with abundance
-                } else
-                {
-                  if(normalise)
-                  {
-                    IsrValue <-  c(IsrValue,
-                                   sum(PA.assemblages * W[, x1] - Wmin[x1]) / (sum(full.W[, x1]) - Wmin[x1])) # Formula with presence-absence data       
-                  } else
-                  {
-                    IsrValue <-  c(IsrValue,
-                                   sum(PA.assemblages * W[, x1])) # Formula with presence-absence data       
-                  }
-                }                   
-              }
-              names(IsrValue)[length(IsrValue)] <- paste("Isr_", colnames(W)[x1], sep ="")
-            }
-            IsrValue <- c(IsrValue,
-                          Richness = sum(assemblages))
-            return(IsrValue)
+            Isr(assemblages, W, abundance = abundance, Wmin = Wmin, normalise = normalise)
           }
 )
 
@@ -186,6 +133,7 @@ setMethod("Isr",
           signature(assemblages = "matrix", W = "vector"),
           function(assemblages, W, abundance = F, Wmin = min(W), normalise = F)
           {
+            full.W <- W
             if(nrow(assemblages) != length(W))
             {
               cat("Remark: Number of species different between assemblages and W, combining with species names...\n")
@@ -193,7 +141,6 @@ setMethod("Isr",
               {
                 stop("Species names of assemblages do not correspond to species names of W")
               }
-              full.W <- W
               W <- W[match(rownames(assemblages), names(W))]
             }
             PA.assemblages <- assemblages
@@ -237,6 +184,7 @@ setMethod("Isr",
           signature(assemblages = "matrix", W = "matrix"),
           function(assemblages, W, abundance = F, Wmin = apply(W, 2, min), normalise = F)
           {
+            full.W <- W
             if(nrow(assemblages) != nrow(W))
             {
               cat("Remark: Number of species different between assemblages and W, combining with species names...\n")
@@ -244,7 +192,6 @@ setMethod("Isr",
               {
                 stop("Species names of assemblages do not correspond to species names of W")
               }
-              full.W <- W
               W <- W[match(rownames(assemblages), rownames(W)), ]
             }
             if(any(colnames(W) %in% c("Q", "R", paste("Q", 1:100, sep = ""), paste("R", 1:100, sep = ""))))

@@ -289,9 +289,6 @@ setMethod("rWeights",
                                    rCutoff[x1])
                 colnames(spWeights)[ncol(spWeights)] <- paste("cut.off", x1, sep ="")
               }
-              
-              spWeights <- cbind(spWeights,
-                                 cut.off = rCutoff)
             }
             if(rounding)
             {

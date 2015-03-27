@@ -18,6 +18,20 @@ setMethod("Irr",
           signature(assemblages = "vector", W = "vector"),
           function(assemblages, W, abundance = F, Wmin = min(W), Wmax = max(W))
           {
+            if(any(is.na(W)))
+            {
+              cat("W contains NA values, they will be removed\n")
+              full.W <- W
+              W <- W[-which(is.na(W))]
+            }
+            if(any(is.na(Wmin)))
+            {
+              Wmin = min(W, na.rm = TRUE)
+            }
+            if(any(is.na(Wmax)))
+            {
+              Wmin = max(W, na.rm = TRUE)
+            }
             if(length(assemblages) != length(W))
             {
               cat("Remark: Number of species different between assemblages and W, combining with species names...\n")
@@ -62,7 +76,18 @@ setMethod("Irr",
             }
             if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
             {
-              W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))), drop = F]
+              W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", 
+                                                 paste("Q", 1:1000, sep = ""), 
+                                                 paste("R", 1:1000, sep = ""),  
+                                                 paste("cut.off", 1:1000, sep = ""))), drop = F]
+              Wmin <- Wmin[-which(names(Wmin) %in% c("Q", "R", "cut.off", 
+                                                     paste("Q", 1:1000, sep = ""), 
+                                                     paste("R", 1:1000, sep = ""),  
+                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
+              Wmax <- Wmax[-which(names(Wmax) %in% c("Q", "R", "cut.off", 
+                                                     paste("Q", 1:1000, sep = ""), 
+                                                     paste("R", 1:1000, sep = ""),  
+                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
             }
             
             IrrValue <- NULL
@@ -117,6 +142,21 @@ setMethod("Irr",
               }
               W <- W[match(rownames(assemblages), names(W))]
             }
+            if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
+            {
+              W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", 
+                                                 paste("Q", 1:1000, sep = ""), 
+                                                 paste("R", 1:1000, sep = ""),  
+                                                 paste("cut.off", 1:1000, sep = ""))), drop = F]
+              Wmin <- Wmin[-which(names(Wmin) %in% c("Q", "R", "cut.off", 
+                                                     paste("Q", 1:1000, sep = ""), 
+                                                     paste("R", 1:1000, sep = ""),  
+                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
+              Wmax <- Wmax[-which(names(Wmax) %in% c("Q", "R", "cut.off", 
+                                                     paste("Q", 1:1000, sep = ""), 
+                                                     paste("R", 1:1000, sep = ""),  
+                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
+            }
             PA.assemblages <- assemblages
             PA.assemblages[PA.assemblages > 0] <- 1
             
@@ -167,7 +207,18 @@ setMethod("Irr",
             }
             if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
             {
-              W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))), drop = F]
+              W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", 
+                                                 paste("Q", 1:1000, sep = ""), 
+                                                 paste("R", 1:1000, sep = ""),  
+                                                 paste("cut.off", 1:1000, sep = ""))), drop = F]
+              Wmin <- Wmin[-which(names(Wmin) %in% c("Q", "R", "cut.off", 
+                                                     paste("Q", 1:1000, sep = ""), 
+                                                     paste("R", 1:1000, sep = ""),  
+                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
+              Wmax <- Wmax[-which(names(Wmax) %in% c("Q", "R", "cut.off", 
+                                                     paste("Q", 1:1000, sep = ""), 
+                                                     paste("R", 1:1000, sep = ""),  
+                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
             }
             
             IrrValue <- NULL
