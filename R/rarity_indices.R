@@ -18,11 +18,17 @@ setMethod("Irr",
           signature(assemblages = "vector", W = "vector"),
           function(assemblages, W, abundance = F, Wmin = min(W), Wmax = max(W))
           {
+            if(any(!(names(assemblages) %in% names(W))))
+            {
+              stop(paste("Certain species names in assemblages have no equivalent in W:",
+                         paste("\n", names(assemblages)[which(!(names(assemblages) %in% names(W)))], collapse = " ")))
+            }
+            # Calculating richness first because species with NAs will be removed later
+            richness <- length(assemblages[assemblages > 0])
+            
             if(any(is.na(W)))
             {
               cat("W contains NA values, they will be removed\n")
-              full.W <- W
-              W <- W[-which(is.na(W))]
             }
             if(any(is.na(Wmin)))
             {
@@ -30,34 +36,20 @@ setMethod("Irr",
             }
             if(any(is.na(Wmax)))
             {
-              Wmin = max(W, na.rm = TRUE)
+              Wmax = max(W, na.rm = TRUE)
             }
-            if(length(assemblages) != length(W))
-            {
-              cat("Remark: Number of species different between assemblages and W, combining with species names...\n")
-              if(any(!(names(assemblages) %in% names(W))))
-              {
-                stop("Species names of assemblages do not correspond to species names of W")
-              }
-              W <- W[match(names(assemblages), names(W))]
-            }
+            
+            # Matching species names in assemblages and W
+            W <- W[match(names(assemblages), names(W))]
+            
             if(sum(assemblages) == 0)
             {
               IrrValue <- 0
             } else
             {
-              PA.assemblages <- assemblages
-              PA.assemblages[PA.assemblages > 0] <- 1
-              
-              if(abundance)
-              {
-                IrrValue <- ((sum(assemblages * W) / sum(assemblages)) - Wmin) / (Wmax - Wmin) # Formula with abundance
-              } else
-              {
-                IrrValue <- ((sum(PA.assemblages * W) / sum(PA.assemblages)) - Wmin) / (Wmax - Wmin) # Formula with presence-absence data       
-              }      
+              IrrValue <- .irr(A = assemblages, W = W, abundance = abundance, Wmin = Wmin, Wmax = Wmax)
             }
-            return(c(Irr = IrrValue, Richness = sum(PA.assemblages)))
+            return(c(Irr = IrrValue, Richness = richness))
           }
 )
 
@@ -65,15 +57,28 @@ setMethod("Irr",
           signature(assemblages = "vector", W = "matrix"),
           function(assemblages, W, abundance = F, Wmin = apply(W, 2, min), Wmax = apply(W, 2, max))
           {
-            if(length(assemblages) != nrow(W))
+            if(any(!(names(assemblages) %in% rownames(W))))
             {
-              cat("Remark: Number of species different between assemblages and W, combining with species names...\n")
-              if(any(!(names(assemblages) %in% rownames(W))))
-              {
-                stop("Species names of assemblages do not correspond to species names of W")
-              }
-              W <- W[match(names(assemblages), rownames(W)), ]
+              stop(paste("Certain species names in assemblages have no equivalent in W:",
+                         paste("\n", names(assemblages)[which(!(names(assemblages) %in% rownames(W)))], collapse = " ")))
             }
+            # Calculating richness first because species with NAs will be removed later
+            richness <- length(assemblages[assemblages > 0])
+            
+            if(any(is.na(W)))
+            {
+              cat("W contains NA values, they will be removed\n")
+            }
+            if(any(is.na(Wmin)))
+            {
+              Wmin = apply(W, 2, min, na.rm = TRUE)
+            }
+            if(any(is.na(Wmax)))
+            {
+              Wmax = apply(W, 2, max, na.rm = TRUE)
+            }
+            
+            # Removing non-weight columns (outputs from rWeights())
             if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
             {
               W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", 
@@ -90,32 +95,18 @@ setMethod("Irr",
                                                      paste("cut.off", 1:1000, sep = ""))), drop = F]
             }
             
-            IrrValue <- NULL
-            for (x1 in 1:ncol(W))
+            
+            # Matching species names in assemblages and W
+            W <- W[match(names(assemblages), rownames(W)), ]
+            
+            IrrValue <- sapply(colnames(W), function(x, A. = assemblages, W. = W, abundance. = abundance, Wmin. = Wmin, Wmax. = Wmax)
             {
-              if(sum(assemblages) == 0)
-              {
-                IrrValue <- c(IrrValue,
-                              0)
-              } else
-              {
-                PA.assemblages <- assemblages
-                PA.assemblages[PA.assemblages > 0] <- 1
-                
-                if(abundance)
-                {
-                  IrrValue <-  c(IrrValue,
-                                 ((sum(assemblages * W[, x1]) / sum(assemblages)) - Wmin[x1]) / (Wmax[x1] - Wmin[x1])) # Formula with abundance
-                } else
-                {
-                  IrrValue <-  c(IrrValue,
-                                 ((sum(PA.assemblages * W[, x1]) / sum(PA.assemblages)) - Wmin[x1]) / (Wmax[x1] - Wmin[x1])) # Formula with presence-absence data       
-                }   
-              }
-              names(IrrValue)[length(IrrValue)] <- paste("Irr_", colnames(W)[x1], sep ="")
-            }
+              .irr(A = A., W = W.[, x], abundance = abundance., Wmin = Wmin.[x], Wmax = Wmax.[x])
+            })
+            names(IrrValue) <- paste("Irr_", colnames(W), sep = "")
+            
             IrrValue <- c(IrrValue,
-                          Richness = sum(PA.assemblages))
+                          Richness = richness)
             return(IrrValue)
           }
 )
@@ -133,15 +124,27 @@ setMethod("Irr",
           signature(assemblages = "matrix", W = "vector"),
           function(assemblages, W, abundance = F, Wmin = min(W), Wmax = max(W))
           {
-            if(nrow(assemblages) != length(W))
+            if(any(!(rownames(assemblages) %in% names(W))))
             {
-              cat("Remark: Number of species different between assemblages and W, combining with species names...\n")
-              if(any(!(rownames(assemblages) %in% names(W))))
-              {
-                stop("Species names of assemblages do not correspond to species names of W")
-              }
-              W <- W[match(rownames(assemblages), names(W))]
+              stop(paste("Certain species names in assemblages have no equivalent in W:",
+                         paste("\n", rownames(assemblages)[which(!(rownames(assemblages) %in% names(W)))], collapse = " ")))
             }
+            # Calculating richness first because species with NAs will be removed later
+            richness <- apply(assemblages, 2, function(x) length(x[x > 0]))
+            
+            if(any(is.na(W)))
+            {
+              cat("W contains NA values, they will be removed\n")
+            }
+            if(any(is.na(Wmin)))
+            {
+              Wmin = min(W, na.rm = TRUE)
+            }
+            if(any(is.na(Wmax)))
+            {
+              Wmax = max(W, na.rm = TRUE)
+            }
+            
             if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
             {
               W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", 
@@ -157,37 +160,24 @@ setMethod("Irr",
                                                      paste("R", 1:1000, sep = ""),  
                                                      paste("cut.off", 1:1000, sep = ""))), drop = F]
             }
-            PA.assemblages <- assemblages
-            PA.assemblages[PA.assemblages > 0] <- 1
             
-            if(abundance)
-            {
-              IrrValue <- apply(assemblages, 2, function(x, Weights, wmin, wmax)
-              {
-                if(sum(x) == 0)
-                {
-                  0
-                } else
-                {
-                  (((sum(x * Weights) / sum(x)) - wmin) / (wmax - wmin))
-                }
-              }, Weights = W, wmin = Wmin, wmax = Wmax) # Formula with abundance
-            } else
-            {
-              IrrValue <- apply(PA.assemblages, 2, function(x, Weights, wmin, wmax)
-              {
-                if(sum(x) == 0)
-                {
-                  0
-                } else
-                {
-                  (((sum(x * Weights) / sum(x)) - wmin) / (wmax - wmin))
-                }
-              }, Weights = W, wmin = Wmin, wmax = Wmax) # Formula with presence-absence data       
-            }
+            # Matching species names in assemblages and W
+            W <- W[match(rownames(assemblages), names(W))]
             
-            IrrValue <- cbind(IrrValue,
-                              Richness = apply(PA.assemblages, 2, sum))
+            
+            IrrValue <- sapply(colnames(assemblages), 
+                               function(x, 
+                                        A. = assemblages, 
+                                        W. = W, 
+                                        abundance. = abundance, 
+                                        Wmin. = Wmin, 
+                                        Wmax. = Wmax)
+            {
+              .irr(A = A.[, x], W = W., abundance = abundance., Wmin = Wmin., Wmax = Wmax.)
+            })
+            
+            IrrValue <- cbind(Irr = IrrValue,
+                              Richness = richness)
             return(IrrValue)
           }
 )
@@ -196,15 +186,27 @@ setMethod("Irr",
           signature(assemblages = "matrix", W = "matrix"),
           function(assemblages, W, abundance = F, Wmin = apply(W, 2, min), Wmax = apply(W, 2, max))
           {
-            if(nrow(assemblages) != nrow(W))
+            if(any(!(rownames(assemblages) %in% rownames(W))))
             {
-              cat("Remark: Number of species different between assemblages and W, combining with species names...\n")
-              if(any(!(rownames(assemblages) %in% rownames(W))))
-              {
-                stop("Species names of assemblages do not correspond to species names of W")
-              }
-              W <- W[match(rownames(assemblages), rownames(W)), ]
+              stop(paste("Certain species names in assemblages have no equivalent in W:",
+                         paste("\n", rownames(assemblages)[which(!(rownames(assemblages) %in% rownames(W)))], collapse = " ")))
             }
+            # Calculating richness first because species with NAs will be removed later
+            richness <- apply(assemblages, 2, function(x) length(x[x > 0]))
+            
+            if(any(is.na(W)))
+            {
+              cat("W contains NA values, they will be removed\n")
+            }
+            if(any(is.na(Wmin)))
+            {
+              Wmin = apply(W, 2, min, na.rm = TRUE)
+            }
+            if(any(is.na(Wmax)))
+            {
+              Wmax = apply(W, 2, max, na.rm = TRUE)
+            }
+            
             if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
             {
               W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", 
@@ -221,46 +223,31 @@ setMethod("Irr",
                                                      paste("cut.off", 1:1000, sep = ""))), drop = F]
             }
             
-            IrrValue <- NULL
-            PA.assemblages <- assemblages
-            PA.assemblages[PA.assemblages > 0] <- 1
+            # Matching species names in assemblages and W
+            W <- W[match(rownames(assemblages), rownames(W)), ]
             
-            for (x1 in 1:ncol(W))
-            {
-              if(abundance)
-              {
-                IrrValue <- cbind(IrrValue,
-                                  apply(assemblages, 2, function(x, Weights, wmin, wmax)
-                                  {
-                                    if(sum(x) == 0)
-                                    {
-                                      0
-                                    } else
-                                    {
-                                      (((sum(x * Weights) / sum(x)) - wmin) / (wmax - wmin))
-                                    }
-                                  }, Weights = W[, x1], wmin = Wmin[x1], wmax = Wmax[x1]) # Formula with abundance
-                )
-              } else
-              {
-                IrrValue <- cbind(IrrValue,
-                                  apply(PA.assemblages, 2, function(x,  Weights, wmin, wmax)
-                                  {
-                                    if(sum(x) == 0)
-                                    {
-                                      0
-                                    } else
-                                    {
-                                      (((sum(x * Weights) / sum(x)) - wmin) / (wmax - wmin))
-                                    }
-                                  }, Weights = W[, x1], wmin = Wmin[x1], wmax = Wmax[x1]) # Formula with presence-absence data   
-                )
-              }
-              colnames(IrrValue)[ncol(IrrValue)] <- paste("Irr_", colnames(W)[x1], sep ="")
-              
-            }
-            IrrValue <- cbind(IrrValue,
-                              Richness = apply(PA.assemblages, 2, sum))
+            IrrValue <- sapply(colnames(assemblages), 
+                               function(x, 
+                                        A. = assemblages, 
+                                        W. = W, 
+                                        abundance. = abundance, 
+                                        Wmin. = Wmin, 
+                                        Wmax. = Wmax)
+                               {
+                                 sapply(colnames(W.), function(y, 
+                                                               A.. = A.[, x], 
+                                                               W.. = W., 
+                                                               abundance.. = abundance., 
+                                                               Wmin.. = Wmin., 
+                                                               Wmax.. = Wmax.)
+                                 {
+                                   .irr(A = A.., W = W..[, y], abundance = abundance.., Wmin = Wmin..[y], Wmax = Wmax..[y])
+                                 })
+                               })
+            rownames(IrrValue) <- paste("Irr_", colnames(W), sep = "")
+            
+            IrrValue <- cbind(t(IrrValue),
+                              Richness = richness)
             return(IrrValue)
           }
 )
@@ -301,3 +288,22 @@ setMethod("Irr",
             Irr(assemblages, W, abundance = abundance, Wmin = Wmin, Wmax = Wmax)
           }
 )
+
+
+# Function to calculate Irr at the vector level
+# This functions assumes that A and W are already of the same length
+# and that the names of A and W are already matched
+.irr <- function(A, W, Wmin, Wmax, abundance)
+{
+  if(any(is.na(W)))
+  {
+    NA.pos <- which(is.na(W))
+    A <- A[-NA.pos]
+    W <- W[-NA.pos]
+  }
+  if(!abundance)
+  {
+    A[A > 0] <- 1
+  } 
+  return((sum(A * W) / length(A[A > 0]) - Wmin) / (Wmax - Wmin))
+}
