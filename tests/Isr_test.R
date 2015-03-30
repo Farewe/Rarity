@@ -332,4 +332,7 @@ if(any(is.na(result)) | any(result[grep("Isr", names(result))] < 0))
 }
 
 
-tot.res
+if(any(diff(tot.res)) > 0)
+{
+  stop("Different values found for the same indices")
+}

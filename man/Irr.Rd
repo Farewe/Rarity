@@ -54,7 +54,7 @@ where \emph{wi} is the weight of the \emph{i}th species in the assemblage, \emph
 where \emph{ai} and \emph{wi} are respectively the abundance and weight of the \emph{i}th species in the assemblage, \emph{N} the total number of individuals in the assemblage, and \emph{w}min and \emph{w}max the minimum and maximum weights respectively.}
 }
 
-\code{NA} are excluded from indice calculations but not from richness calculations.
+Species with \code{NA} weights are excluded when indices are computed (they are kept for richness). 
 }
 \section{Warning}{
   Column names of \code{W} with names like "Q", "R", "cut.off", "Q1" "Q2" "Q3" and so on, "R1", "R2" "R3" and so on, "cut.off1", "cut.off2", and so on will be ignored.

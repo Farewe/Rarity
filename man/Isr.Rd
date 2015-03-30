@@ -58,11 +58,11 @@ where \emph{ai} and \emph{wi} are respectively the abundance and weight of the \
 }
 \item{Occurrence-based Isr, normalised between 0 and 1:
 \deqn{\frac{\sum(w_i - w_{min})}{\sum(W_j - w_{min})}}{\sum(wi - wmin) / \sum(Wj - wmin)}
-where \emph{wi} is the weight of the \emph{i}th species in the assemblage, \emph{wmin} the minimum weight and \emph{Wj} the weight of the \emph{j}th species in the regional species pool.
+where \emph{wi} is the weight of the \emph{i}th species in the assemblage, \emph{wmin} the minimum weight and \emph{Wj} the weight of the \emph{j}th species in the total species pool (provided in \code{W}).
 }
 }
 
-\code{NA} are excluded from indice calculations but not from richness calculations.
+Species with \code{NA} weights are excluded when indices are computed (they are kept for richness). 
 }
 \section{Warning}{
   Column names of \code{W} with names like "Q", "R", "cut.off", "Q1" "Q2" "Q3" and so on, "R1", "R2" "R3" and so on, "cut.off1", "cut.off2", and so on will be ignored.

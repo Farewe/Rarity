@@ -12,7 +12,7 @@ Calculate rarity weights for a single scale or for multiple scales on the basis 
 }
 \usage{
 rWeights(occData, Qmax = max(occData), Qmin = min(occData), 
-         wMethods = "W", rCutoff = "Gaston", normalized = T, 
+         wMethods = "W", rCutoff = "Gaston", normalised = T, 
          assemblages, extended = F, rounding = 3)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -32,8 +32,8 @@ integer. Minimum occurrence (see details). By default, the minimum occurrence of
   \item{rCutoff}{
 a decimal or a vector of values between 0 and 1, or \code{Gaston} or \code{Leroy}. Indicates the rarity cutoff(s) or the method to use to calculate the rarity cutoff(s). The rarity cut-off is by default calculated as a percentage of the maximum occurrence  (see details)
 }
-  \item{normalized}{
-TRUE or FALSE. If TRUE, then weights are normalized between 0 and 1.
+  \item{normalised}{
+TRUE or FALSE. If TRUE, then weights are normalised between 0 and 1.
 }
   \item{assemblages}{
 matrix or data.frame. Set of assemblages of species to calculate the rarity cutoff point(s) with the \code{Leroy}  method (optional)
@@ -46,9 +46,6 @@ An integer or FALSE. If an integer is provided, then the values of weights will 
 }
 }
 \details{
-NA values are not (yet) allowed (remove them from the dataset before running the function).
-
-
 
 To calculate single-scale weights, simply provide a vector with species occurrences.
 To calculate multiscale rarity weights, provide either a matrix or a data.frame where species are in rows, and each column provides occurrence for a particular scale.
@@ -64,7 +61,7 @@ Three weighting methods are available (more will become available later):
 \enumerate{
 \item{\code{W}: This is the method described in Leroy et al. (2013). We recommend using this method for both single and multiscale weight calculations.
 \deqn{\exp(-(\frac{Q_{i} - Q_{min}}{r_j \times Q_{max} - Q_{min}}\times0.97 + 1.05)^2)}{exp(-(((Qi - Qmin)/(r * Qmax - Qmin)) * 0.97 + 1.05)^2)}
-where \emph{Qi} is the occurrence of species \emph{i}, Qmin and Qmax are respectively the minimum and maximum occurrences in the species pool and \emph{r} is the choosen rarit cut-off point (as a percentage of occurrence).
+where \emph{Qi} is the occurrence of species \emph{i}, Qmin and Qmax are respectively the minimum and maximum occurrences in the species pool and \emph{r} is the choosen rarity cut-off point (as a percentage of occurrence).
 }
 \item{\code{invQ}: This is the inverse of occurrence
 \deqn{\frac{1}{Q_i}}{1/Qi}
@@ -83,6 +80,9 @@ For methods \code{W} and \code{oldW}, a rarity cutoff point is required. The rar
  - \code{Gaston} method: the rarity cutoff point is the first quartile of species occurrences, i.e. rare species are the 25 percent species with the lowest occurrence.
  
  - \code{Leroy} method: the rarity cutoff point is the occurrence at which the average proportion of rare species in local assemblages is 25 percent. This method requires \code{assemblages} to calculate the average proportion of rare species in  assemblages.
+ 
+ 
+\code{NA} are properly handled by the function.
 }
 \value{
 A data.frame containing the results : species occurrences, rarity statuses, rarity weights and the used rarity cut-offs.

@@ -8,7 +8,7 @@ setGeneric("rWeights",
                           Qmin = min(occData), 
                           wMethods = "W", # Possibilities: W, invQ, oldW (attention)
                           rCutoff = "Gaston", # A value, "Leroy" or "Gaston"
-                          normalized = T, # Should weights be normalized?
+                          normalised = T, # Should weights be normalised?
                           assemblages, # Assemblages for meanCutoff calculation
                           extended = F, # Should one-scale weights be provided in the weight table?
                           rounding = 3) # F = no rounding, an integer = the number of digits for rounding
@@ -19,8 +19,17 @@ setGeneric("rWeights",
 
 setMethod("rWeights",
           signature(occData = "vector"),
-          function(occData, Qmax = max(occData), Qmin = min(occData), wMethods = "W", rCutoff, normalized = T, assemblages, rounding = 3)
-          {    
+          function(occData, Qmax = max(occData), Qmin = min(occData), wMethods = "W", rCutoff, normalised = T, assemblages, rounding = 3)
+          {   
+            if(any(is.na(Qmax)))
+            {
+              Qmax = max(occData, na.rm = T)
+            }
+            if(any(is.na(Qmin)))
+            {
+              Qmin = min(occData, na.rm = T)
+            }
+            
             if (is.numeric(rCutoff))
             {
               if(rCutoff > 1 | round(rCutoff * Qmax, 10) < Qmin)
@@ -75,7 +84,7 @@ setMethod("rWeights",
               cat("Rarity cut-off point:", rCutoff, "/", rCutoff * Qmax, "\n")
             } else if (rCutoff == "Gaston")
             {
-              rCutoff <- quantile(occData, .25)/Qmax
+              rCutoff <- quantile(occData, .25, na.rm = T)/Qmax
               if(round(rCutoff * Qmax, 10) == Qmin)
               {
                 rCutoff <- rCutoff + .000000001
@@ -94,7 +103,7 @@ setMethod("rWeights",
             {
               spWeights <- cbind(spWeights,
                                  W = exp( -(((occData - Qmin)/(rCutoff * Qmax - Qmin)) * 0.97 + 1.05)^2))
-              if(normalized == T)
+              if(normalised == T)
               {
                 spWeights[, "W"] <- spWeights[, "W"] / exp( -(((Qmin - Qmin)/(rCutoff * Qmax - Qmin)) * 0.97 + 1.05)^2)
               }
@@ -103,7 +112,7 @@ setMethod("rWeights",
             {
               spWeights <- cbind(spWeights,
                                  invQ = 1 / occData)
-              if(normalized == T)
+              if(normalised == T)
               {
                 spWeights[, "invQ"] <- spWeights[, "invQ"] / (1 / Qmin)
               }
@@ -113,7 +122,7 @@ setMethod("rWeights",
               n <- .nFind(Qmin = Qmin, Qmax = Qmax, r = rCutoff)
               spWeights <- cbind(spWeights,
                                  oldW = exp( -(((occData / Qmax) * n + 1)^2) ))
-              if(normalized == T)
+              if(normalised == T)
               {
                 spWeights[, "oldW"] <- spWeights[, "oldW"] / exp( -(((Qmin / Qmax) * n + 1)^2) )
               }
@@ -139,8 +148,17 @@ setMethod("rWeights",
 
 setMethod("rWeights",
           signature(occData = "matrix"),
-          function(occData, Qmax = apply(occData, 2, max), Qmin = apply(occData, 2, min), wMethods = "W", rCutoff, normalized = T, assemblages, extended = F, rounding = 3)
+          function(occData, Qmax = apply(occData, 2, max), Qmin = apply(occData, 2, min), wMethods = "W", rCutoff, normalised = T, assemblages, extended = F, rounding = 3)
           {
+            if(any(is.na(Qmax)))
+            {
+              Qmax = apply(occData, 2, max, na.rm = T)
+            }
+            if(any(is.na(Qmin)))
+            {
+              Qmin = apply(occData, 2, min, na.rm = T)
+            }
+            
             if(is.numeric(rCutoff))
             {
               if(length(rCutoff) != ncol(occData))
@@ -206,7 +224,7 @@ setMethod("rWeights",
               
             } else if (rCutoff == "Gaston")
             {
-              rCutoff <- apply(occData, 2, quantile, .25) / Qmax
+              rCutoff <- apply(occData, 2, quantile, .25, na.rm = T) / Qmax
               if(any(round(rCutoff * Qmax, 10) == Qmin))
               {
                 rCutoff[which(round(rCutoff * Qmax, 10) == Qmin)] <- rCutoff[which(round(rCutoff * Qmax, 10) == Qmin)]  + .000000001
@@ -231,7 +249,7 @@ setMethod("rWeights",
                 spWeights <- cbind(spWeights,
                                    exp( -(((occData[, x1] - Qmin[x1])/(rCutoff[x1] * Qmax[x1] - Qmin[x1])) * 0.97 + 1.05)^2))
 
-                if(normalized)
+                if(normalised)
                 {
                   spWeights[, ncol(spWeights)] <- spWeights[, ncol(spWeights)] / exp( -(((Qmin[x1] - Qmin[x1])/(rCutoff[x1] * Qmax[x1] - Qmin[x1])) * 0.97 + 1.05)^2)
                 }
@@ -246,7 +264,7 @@ setMethod("rWeights",
               {
                 spWeights <- cbind(spWeights,
                                    invQ = 1 / occData[, x1])
-                if(normalized == T)
+                if(normalised == T)
                 {
                   spWeights[, ncol(spWeights)] <- spWeights[, ncol(spWeights)] / (1 / Qmin[x1])
                 }
@@ -262,7 +280,7 @@ setMethod("rWeights",
                 n <- .nFind(Qmin = Qmin[x1], Qmax = Qmax[x1], r = rCutoff[x1])
                 spWeights <- cbind(spWeights,
                                    oldW = exp( -(((occData[, x1] / Qmax[x1]) * n + 1)^2) ))
-                if(normalized == T)
+                if(normalised == T)
                 {
                   spWeights[, ncol(spWeights)] <- spWeights[, ncol(spWeights)] / exp( -(((Qmin[x1] / Qmax[x1])) * n + 1)^2)
                 }
@@ -313,10 +331,10 @@ setMethod("rWeights",
 
 setMethod("rWeights",
           signature(occData = "data.frame"),
-          function(occData, Qmax = apply(occData, 2, max), Qmin = apply(occData, 2, min), wMethods = "W", rCutoff, normalized = T, assemblages, extended = F)
+          function(occData, Qmax = apply(occData, 2, max), Qmin = apply(occData, 2, min), wMethods = "W", rCutoff, normalised = T, assemblages, extended = F)
           {
             occData <- as.matrix(occData)
-            rWeights(occData = occData, Qmax = Qmax, Qmin = Qmin, wMethods = wMethods, rCutoff = rCutoff, normalized = normalized, assemblages = assemblages, extended = extended)
+            rWeights(occData = occData, Qmax = Qmax, Qmin = Qmin, wMethods = wMethods, rCutoff = rCutoff, normalised = normalised, assemblages = assemblages, extended = extended)
           }
           )
 

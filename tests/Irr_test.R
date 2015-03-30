@@ -107,3 +107,9 @@ if(any(is.na(result)) | any(result[grep("Irr", names(result))] < 0))
 {
   stop("Error in the test")
 }
+
+
+if(any(diff(tot.res)) > 0)
+{
+  stop("Different values found for the same indices")
+}
