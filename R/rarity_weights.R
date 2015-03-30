@@ -156,7 +156,7 @@ setMethod("rWeights",
                 rCutoff[which(round(rCutoff * Qmax, 10) == Qmin)] <- rCutoff[which(round(rCutoff * Qmax, 10) == Qmin)]  + .000000001
                 warning("The cutoff cannot be equal to Qmin for mathematical reasons. Setting a cutoff slightly above Qmin (Qmin + .000000001).")
               }
-              cat("Rarity cut-off points:\n", paste(colnames(occData), rCutoff, "/", rCutoff * Qmax, collapse = "\n ", sep =" "), "\n")
+              cat("Rarity cut-off points:\n", paste(colnames(occData), rCutoff, "/", rCutoff * Qmax, collapse = "\n ", sep = " "), "\n")
             } else if (rCutoff == "Leroy")
             {
               if(!is.matrix(assemblages))
@@ -202,7 +202,7 @@ setMethod("rWeights",
                 rCutoff[which(round(rCutoff * Qmax, 10) == Qmin)] <- rCutoff[which(round(rCutoff * Qmax, 10) == Qmin)]  + .000000001
                 warning("The cutoff cannot be equal to Qmin for mathematical reasons. Setting a cutoff slightly above Qmin (Qmin + .000000001).")
               }
-              cat("Rarity cut-off points:\n", paste(colnames(occData), rCutoff, "/", rCutoff * Qmax, collapse = "\n ", sep =" "), "\n")
+              cat("Rarity cut-off points:\n", paste(colnames(occData), rCutoff, "/", rCutoff * Qmax, collapse = "\n ", sep = " "), "\n")
               
             } else if (rCutoff == "Gaston")
             {
@@ -212,7 +212,7 @@ setMethod("rWeights",
                 rCutoff[which(round(rCutoff * Qmax, 10) == Qmin)] <- rCutoff[which(round(rCutoff * Qmax, 10) == Qmin)]  + .000000001
                 warning("The cutoff cannot be equal to Qmin for mathematical reasons. Setting a cutoff slightly above Qmin (Qmin + .000000001).")
               }
-              cat("Rarity cut-off points:\n", paste(colnames(occData), rCutoff, "/", rCutoff * Qmax, collapse = "\n ", sep =" "), "\n")
+              cat("Rarity cut-off points:\n", paste(colnames(occData), rCutoff, "/", rCutoff * Qmax, collapse = "\n ", sep = " "), "\n")
             } else stop("Please specify a correct cutoff (either a value or a correct method)")
 
             
@@ -222,7 +222,7 @@ setMethod("rWeights",
             {
               spWeights <- cbind(spWeights,
                                  occData[, x1] <= rCutoff[x1] * Qmax[x1])
-              colnames(spWeights)[ncol(spWeights)] <- paste("R", x1, sep ="")
+              colnames(spWeights)[ncol(spWeights)] <- paste("R", x1, sep = "")
             }
             if ("W" %in% wMethods)
             {
@@ -235,7 +235,7 @@ setMethod("rWeights",
                 {
                   spWeights[, ncol(spWeights)] <- spWeights[, ncol(spWeights)] / exp( -(((Qmin[x1] - Qmin[x1])/(rCutoff[x1] * Qmax[x1] - Qmin[x1])) * 0.97 + 1.05)^2)
                 }
-                colnames(spWeights)[ncol(spWeights)] <- paste("W", x1, sep ="")
+                colnames(spWeights)[ncol(spWeights)] <- paste("W", x1, sep = "")
               }
               spWeights <- cbind(spWeights,
                                  W = rowSums(spWeights[, (ncol(spWeights) - ncol(occData) + 1):ncol(spWeights)]))
@@ -250,7 +250,7 @@ setMethod("rWeights",
                 {
                   spWeights[, ncol(spWeights)] <- spWeights[, ncol(spWeights)] / (1 / Qmin[x1])
                 }
-                colnames(spWeights)[ncol(spWeights)] <- paste("invQ", x1, sep ="")
+                colnames(spWeights)[ncol(spWeights)] <- paste("invQ", x1, sep = "")
               }
               spWeights <- cbind(spWeights,
                                  invQ = rowSums(spWeights[, (ncol(spWeights) - ncol(occData) + 1):ncol(spWeights)]))
@@ -266,7 +266,7 @@ setMethod("rWeights",
                 {
                   spWeights[, ncol(spWeights)] <- spWeights[, ncol(spWeights)] / exp( -(((Qmin[x1] / Qmax[x1])) * n + 1)^2)
                 }
-                colnames(spWeights)[ncol(spWeights)] <- paste("oldW", x1, sep ="")
+                colnames(spWeights)[ncol(spWeights)] <- paste("oldW", x1, sep = "")
               }
               spWeights <- cbind(spWeights,
                                  oldW = rowSums(spWeights[, (ncol(spWeights) - ncol(occData) + 1):ncol(spWeights)]))
@@ -287,7 +287,7 @@ setMethod("rWeights",
               {
                 spWeights <- cbind(spWeights,
                                    rCutoff[x1])
-                colnames(spWeights)[ncol(spWeights)] <- paste("cut.off", x1, sep ="")
+                colnames(spWeights)[ncol(spWeights)] <- paste("cut.off", x1, sep = "")
               }
             }
             if(rounding)

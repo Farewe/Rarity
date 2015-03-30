@@ -1,4 +1,4 @@
-# library(Rarity)
+library(Rarity)
 data(spid.occ)
 
 # Preparation of rarity weights

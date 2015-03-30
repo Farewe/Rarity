@@ -78,36 +78,47 @@ setMethod("Irr",
               Wmax = apply(W, 2, max, na.rm = TRUE)
             }
             
-            # Removing non-weight columns (outputs from rWeights())
             if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
             {
               W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", 
                                                  paste("Q", 1:1000, sep = ""), 
                                                  paste("R", 1:1000, sep = ""),  
-                                                 paste("cut.off", 1:1000, sep = ""))), drop = F]
+                                                 paste("cut.off", 1:1000, sep = ""))), drop = T]
+            }
+            if(any(names(Wmin) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
+            {
               Wmin <- Wmin[-which(names(Wmin) %in% c("Q", "R", "cut.off", 
                                                      paste("Q", 1:1000, sep = ""), 
                                                      paste("R", 1:1000, sep = ""),  
-                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
+                                                     paste("cut.off", 1:1000, sep = "")))]
+            }
+            if(any(names(Wmax) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
+            {
               Wmax <- Wmax[-which(names(Wmax) %in% c("Q", "R", "cut.off", 
                                                      paste("Q", 1:1000, sep = ""), 
                                                      paste("R", 1:1000, sep = ""),  
-                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
+                                                     paste("cut.off", 1:1000, sep = "")))]
             }
-            
-            
-            # Matching species names in assemblages and W
-            W <- W[match(names(assemblages), rownames(W)), ]
-            
-            IrrValue <- sapply(colnames(W), function(x, A. = assemblages, W. = W, abundance. = abundance, Wmin. = Wmin, Wmax. = Wmax)
+
+            if(is.vector(W))
             {
-              .irr(A = A., W = W.[, x], abundance = abundance., Wmin = Wmin.[x], Wmax = Wmax.[x])
-            })
-            names(IrrValue) <- paste("Irr_", colnames(W), sep = "")
-            
-            IrrValue <- c(IrrValue,
-                          Richness = richness)
-            return(IrrValue)
+              Irr(assemblages = assemblages, W = W, abundance = abundance, Wmin = Wmin, Wmax = Wmax)
+            } else
+            {
+              
+              # Matching species names in assemblages and W
+              W <- W[match(names(assemblages), rownames(W)), ]
+              
+              IrrValue <- sapply(colnames(W), function(x, A. = assemblages, W. = W, abundance. = abundance, Wmin. = Wmin, Wmax. = Wmax)
+              {
+                .irr(A = A., W = W.[, x], abundance = abundance., Wmin = Wmin.[x], Wmax = Wmax.[x])
+              })
+              names(IrrValue) <- paste("Irr_", colnames(W), sep = "")
+              
+              IrrValue <- c(IrrValue,
+                            Richness = richness)
+              return(IrrValue)
+            }
           }
 )
 
@@ -145,22 +156,6 @@ setMethod("Irr",
               Wmax = max(W, na.rm = TRUE)
             }
             
-            if(any(colnames(W) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
-            {
-              W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", 
-                                                 paste("Q", 1:1000, sep = ""), 
-                                                 paste("R", 1:1000, sep = ""),  
-                                                 paste("cut.off", 1:1000, sep = ""))), drop = F]
-              Wmin <- Wmin[-which(names(Wmin) %in% c("Q", "R", "cut.off", 
-                                                     paste("Q", 1:1000, sep = ""), 
-                                                     paste("R", 1:1000, sep = ""),  
-                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
-              Wmax <- Wmax[-which(names(Wmax) %in% c("Q", "R", "cut.off", 
-                                                     paste("Q", 1:1000, sep = ""), 
-                                                     paste("R", 1:1000, sep = ""),  
-                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
-            }
-            
             # Matching species names in assemblages and W
             W <- W[match(rownames(assemblages), names(W))]
             
@@ -178,6 +173,7 @@ setMethod("Irr",
             
             IrrValue <- cbind(Irr = IrrValue,
                               Richness = richness)
+            rownames(IrrValue) <- colnames(assemblages)
             return(IrrValue)
           }
 )
@@ -212,43 +208,56 @@ setMethod("Irr",
               W <- W[, -which(colnames(W) %in% c("Q", "R", "cut.off", 
                                                  paste("Q", 1:1000, sep = ""), 
                                                  paste("R", 1:1000, sep = ""),  
-                                                 paste("cut.off", 1:1000, sep = ""))), drop = F]
+                                                 paste("cut.off", 1:1000, sep = ""))), drop = T]
+            }
+            if(any(names(Wmin) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
+            {
               Wmin <- Wmin[-which(names(Wmin) %in% c("Q", "R", "cut.off", 
                                                      paste("Q", 1:1000, sep = ""), 
                                                      paste("R", 1:1000, sep = ""),  
-                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
+                                                     paste("cut.off", 1:1000, sep = "")))]
+            }
+            if(any(names(Wmax) %in% c("Q", "R", "cut.off", paste("Q", 1:1000, sep = ""), paste("R", 1:1000, sep = ""),  paste("cut.off", 1:1000, sep = ""))))
+            {
               Wmax <- Wmax[-which(names(Wmax) %in% c("Q", "R", "cut.off", 
                                                      paste("Q", 1:1000, sep = ""), 
                                                      paste("R", 1:1000, sep = ""),  
-                                                     paste("cut.off", 1:1000, sep = ""))), drop = F]
+                                                     paste("cut.off", 1:1000, sep = "")))]
             }
             
-            # Matching species names in assemblages and W
-            W <- W[match(rownames(assemblages), rownames(W)), ]
-            
-            IrrValue <- sapply(colnames(assemblages), 
-                               function(x, 
-                                        A. = assemblages, 
-                                        W. = W, 
-                                        abundance. = abundance, 
-                                        Wmin. = Wmin, 
-                                        Wmax. = Wmax)
-                               {
-                                 sapply(colnames(W.), function(y, 
-                                                               A.. = A.[, x], 
-                                                               W.. = W., 
-                                                               abundance.. = abundance., 
-                                                               Wmin.. = Wmin., 
-                                                               Wmax.. = Wmax.)
+            if(is.vector(W))
+            {
+              Irr(assemblages, W, abundance = abundance, Wmin = Wmin, Wmax = Wmax)
+            } else
+            {
+              
+              # Matching species names in assemblages and W
+              W <- W[match(rownames(assemblages), rownames(W)), ]
+              
+              IrrValue <- sapply(colnames(assemblages), 
+                                 function(x, 
+                                          A. = assemblages, 
+                                          W. = W, 
+                                          abundance. = abundance, 
+                                          Wmin. = Wmin, 
+                                          Wmax. = Wmax)
                                  {
-                                   .irr(A = A.., W = W..[, y], abundance = abundance.., Wmin = Wmin..[y], Wmax = Wmax..[y])
+                                   sapply(colnames(W.), function(y, 
+                                                                 A.. = A.[, x], 
+                                                                 W.. = W., 
+                                                                 abundance.. = abundance., 
+                                                                 Wmin.. = Wmin., 
+                                                                 Wmax.. = Wmax.)
+                                   {
+                                     .irr(A = A.., W = W..[, y], abundance = abundance.., Wmin = Wmin..[y], Wmax = Wmax..[y])
+                                   })
                                  })
-                               })
-            rownames(IrrValue) <- paste("Irr_", colnames(W), sep = "")
-            
-            IrrValue <- cbind(t(IrrValue),
-                              Richness = richness)
-            return(IrrValue)
+              rownames(IrrValue) <- paste("Irr_", colnames(W), sep = "")
+              
+              IrrValue <- cbind(t(IrrValue),
+                                Richness = richness)
+              return(IrrValue)
+            }
           }
 )
 
