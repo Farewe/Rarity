@@ -3,4 +3,5 @@ exportPattern("^[[:alpha:]]+")
 export(Irr)
 export(Isr)
 export(rWeights)
-
+importFrom("graphics", "axis", "mtext", "par", "plot", "text")
+importFrom("stats", "cor.test", "quantile")

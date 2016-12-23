@@ -1,4 +1,4 @@
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/Rarity)](http://cran.r-project.org/package=Rarity)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/Rarity)](https://cran.r-project.org/package=Rarity)
 [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/Rarity)](http://r-pkg.org/pkg/Rarity)
 [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/Rarity)](http://r-pkg.org/pkg/Rarity)
 [![Research software impact](http://depsy.org/api/package/cran/Rarity/badge.svg)](http://depsy.org/package/r/Rarity)
