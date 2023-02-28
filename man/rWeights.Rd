@@ -147,7 +147,4 @@ rWeights(spid.occ, wMethods = c("W", "invQ"), rCutoff = "Leroy",
          assemblages = assemblages.matrix, extended = TRUE) # Provided that you have 
                                              # created "assemblages.matrix" as above
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+

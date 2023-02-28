@@ -314,5 +314,6 @@ setMethod("Irr",
   {
     A[A > 0] <- 1
   } 
-  return((sum(A * W) / length(A[A > 0]) - Wmin) / (Wmax - Wmin))
+  
+  return((sum(A * W) / sum(A[A > 0]) - Wmin) / (Wmax - Wmin))
 }
